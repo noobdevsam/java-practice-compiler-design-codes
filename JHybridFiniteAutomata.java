@@ -1,8 +1,27 @@
 void main() {
 
+    // Example: NFA that accepts strings containing "10" OR "11"
+    var acceptStates = new HashSet<>(List.of("q_accept"));
+    var automaton = new HybridAutomaton("q0", acceptStates);
+
+    // Transitions
+    automaton.addTransition("q0", '1', "q1"); // Start of "10" or "11"
+    automaton.addTransition("q0", '0', "q0"); // Stay at start
+    automaton.addTransition("q0", '1', "q0"); // Stay at start (NFA branching)
+
+    automaton.addTransition("q1", '0', "q_accept");
+    automaton.addTransition("q1", '1', "q_accept");
+
+    // Final state loops
+    automaton.addTransition("q_accept", '0', "q_accept");
+    automaton.addTransition("q_accept", '1', "q_accept");
+
+    String test = "0010";
+    IO.println("Input '" + test + "' accepted: " + automaton.process(test));
+
 }
 
-class HybridAutomaton {
+private class HybridAutomaton {
     private final String initialState;
     private final Set<String> acceptStates;
 
@@ -21,8 +40,8 @@ class HybridAutomaton {
      */
     void addTransition(String from, char symbol, String to) {
         transitions
-                .computeIfAbsent(from, k -> new HashMap<>())
-                .computeIfAbsent(symbol, k -> new HashSet<>())
+                .computeIfAbsent(from, _ -> new HashMap<>())
+                .computeIfAbsent(symbol, _ -> new HashSet<>())
                 .add(to);
     }
 
