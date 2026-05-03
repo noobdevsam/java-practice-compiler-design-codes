@@ -23,7 +23,7 @@ void main() {
     }
 }
 
-static class DynamicDFA {
+class DynamicDFA {
 
     private String currentState;
     private final String startState;
