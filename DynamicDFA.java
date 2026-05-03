@@ -1,9 +1,26 @@
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 void main() {
-    IO.print("Hello, World!");
+    // Example: A DFA that accepts strings ending in '1' (Alphabet: {0, 1})
+    var acceptStates = new HashSet<String>(List.of("q1"));
+    var dfa = new DynamicDFA("q0", acceptStates);
+
+    // Define transitions
+    dfa.addTransition("q0", '0', "q0"); // From q0, on '0', stay in q0
+    dfa.addTransition("q0", '1', "q1"); // From q0, on '1', go to q1
+    dfa.addTransition("q1", '0', "q0"); // From q1, on '0', go back to q0
+    dfa.addTransition("q1", '1', "q1"); // From q1, on '1', stay in q1
+
+    // Test the DFA with some input strings
+    var testStrings = List.of("101", "1100", "000", "111", "0101");
+    for (var testString : testStrings) {
+        boolean result = dfa.process(testString);
+        System.out.println("Input: " + testString + " -> Accepted: " + result);
+    }
 }
 
 static class DynamicDFA {
