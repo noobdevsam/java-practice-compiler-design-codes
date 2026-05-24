@@ -1,0 +1,96 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+
+// 1. Removed "implements ActionListener" since we no longer respond to timer events
+class CoordinatePlane extends JPanel {
+
+    public CoordinatePlane() {
+        // 2. Timer initialization and start code have been completely removed
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        // -------- AXES (ALWAYS VISIBLE) --------
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawLine(0, 220, 640, 220); // x-axis
+        g2d.drawLine(320, 0, 320, 480); // y-axis
+
+        // -------- ORIGINAL TRIANGLE --------
+        int[] xPoints = {400, 440, 360};
+        int[] yPoints = {140, 210, 210}; 
+
+        g2d.setColor(Color.BLACK);
+        g2d.drawPolygon(xPoints, yPoints, 3);
+
+        // Save the clean grid state before applying any transformations
+        AffineTransform original = g2d.getTransform();
+
+        // -------- 3. RENDER ALL TRANSFORMATIONS SIMULTANEOUSLY --------
+
+        // --- TRANSLATION (RED) ---
+        AffineTransform t = new AffineTransform();
+        t.translate(-120, 40);
+        g2d.setTransform(t);
+        g2d.setColor(Color.RED);
+        g2d.drawPolygon(xPoints, yPoints, 3);
+        g2d.setTransform(original); // Reset back to original grid
+
+        // --- ROTATION (BLUE) ---
+        AffineTransform r = new AffineTransform();
+        r.rotate(Math.toRadians(45), 320, 220);
+        g2d.setTransform(r);
+        g2d.setColor(Color.BLUE);
+        g2d.drawPolygon(xPoints, yPoints, 3);
+        g2d.setTransform(original); 
+
+        // --- SCALING (GREEN) ---
+        AffineTransform s = new AffineTransform();
+        s.translate(320, 220);
+        s.scale(1.5, 1.5);
+        s.translate(-320, -220);
+        g2d.setTransform(s);
+        g2d.setColor(Color.GREEN);
+        g2d.drawPolygon(xPoints, yPoints, 3);
+        g2d.setTransform(original); 
+
+        // --- REFLECTION ABOUT X-AXIS (MAGENTA) ---
+        AffineTransform ref = new AffineTransform();
+        ref.translate(0, 220);   
+        ref.scale(1, -1);        
+        ref.translate(0, -220);  
+        g2d.setTransform(ref);
+        g2d.setColor(Color.MAGENTA);
+        g2d.drawPolygon(xPoints, yPoints, 3);
+        g2d.setTransform(original); 
+
+        // --- SHEAR (ORANGE) ---
+        AffineTransform sh = new AffineTransform();
+        sh.shear(0.5, 0);
+        g2d.setTransform(sh);
+        g2d.setColor(Color.ORANGE);
+        g2d.drawPolygon(xPoints, yPoints, 3);
+        
+        g2d.setTransform(original);
+    }
+
+    // 4. Removed the actionPerformed() method entirely
+
+    // -------- UI CONTROLS --------
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Triangle Transformations (Static View)");
+        CoordinatePlane panel = new CoordinatePlane();
+
+        // 5. Removed pauseBtn, resetBtn, and the control JPanel
+        frame.setLayout(new BorderLayout());
+        frame.add(panel, BorderLayout.CENTER);
+
+        // Adjust window size slightly since we removed the bottom button panel
+        frame.setSize(640, 480); 
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
